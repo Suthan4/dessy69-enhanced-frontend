@@ -12,6 +12,8 @@ import { cookies } from "next/headers";
 import { createApi } from "@/lib/api/axios";
 
 export default async function AdminDashboard() {
+    console.log("🚨 ADMIN DASHBOARD SSR HIT", new Date().toISOString());
+
   const cookiesStore = await cookies();
   const api = createApi(cookiesStore);
   // Fetch dashboard data
