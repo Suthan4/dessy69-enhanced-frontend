@@ -1,14 +1,14 @@
 import { createApi } from "./axios";
 import { AuthResponse, LoginCredentials, RegisterData, User } from "../types/auth";
 import { ApiResponse } from "../types/common";
+import { clientApi } from "./client-api";
 
-const api = createApi();
-export const authApi = (api = createApi()) => ({
+export const authApi = () => ({
   login: async (
     credentials: LoginCredentials,
     signal?: AbortSignal
   ): Promise<AuthResponse> => {
-    const response = await api.post<any, ApiResponse<AuthResponse>>(
+    const response = await clientApi.post<any, ApiResponse<AuthResponse>>(
       "/auth/login",
       credentials,
       { signal }
@@ -16,7 +16,7 @@ export const authApi = (api = createApi()) => ({
     return response.data!;
   },
   register: async (data: RegisterData): Promise<AuthResponse> => {
-    const response = await api.post<any, ApiResponse<AuthResponse>>(
+    const response = await clientApi.post<any, ApiResponse<AuthResponse>>(
       "/auth/register",
       data
     );
@@ -24,7 +24,7 @@ export const authApi = (api = createApi()) => ({
   },
 
   getCurrentUser: async (): Promise<User> => {
-    const response = await api.get<any, ApiResponse<User>>("/auth/me");
+    const response = await clientApi.get<any, ApiResponse<User>>("/auth/me");
     return response.data!;
   },
   logout: () => {

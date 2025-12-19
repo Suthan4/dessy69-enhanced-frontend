@@ -9,19 +9,19 @@ import { Card } from "@/components/ui/Card";
 import { formatCurrency } from "@/lib/utils/formatters";
 import { cookies } from "next/headers";
 import { createApi } from "@/lib/api/axios";
+import { createServerApi } from "@/lib/api/server-api";
 
 export default async function AdminDashboard() {
   console.log("🚨 ADMIN DASHBOARD SSR HIT", new Date().toISOString());
 
-  const cookiesStore = await cookies();
-  const api = createApi(cookiesStore);
+  const api = await createServerApi();
   // Fetch dashboard data
   let ordersData;
   let productsData;
   try {
     [ordersData, productsData] = await Promise.all([
-      ordersApi(api).getAll({ page: 1, limit: 10 }),
-      productsApi(api).getAll({ page: 1, limit: 1 }),
+      api.get("/orders", { params: { page: 1, limit: 10 } }),
+      api.get("/products", { params: { page: 1, limit: 1 } }),
     ]);
   } catch (error) {
     console.error("Error fetching menu data:", error);
@@ -30,12 +30,10 @@ export default async function AdminDashboard() {
     ordersData = { payload: [], total: 0 };
   }
 
-  const orders = ordersData?.payload || [];
-  const totalOrders = ordersData?.total || 0;
-  const totalProducts = productsData?.total || 0;
+  const orders = ordersData?.data.data.orders || [];
+  const totalOrders = ordersData?.data.data.total || 0;
+  const totalProducts = productsData?.data.total || 0;
 
-  console.log("orders", orders);
-  console.log("ordersData", ordersData);
 
   // Calculate stats
   // const totalRevenue = orders.reduce((sum, order) => sum + order.total, 0);

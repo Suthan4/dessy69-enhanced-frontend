@@ -2,10 +2,11 @@ import { createApi } from "./axios";
 import { Order, CreateOrderData } from "../types/order";
 import { ApiResponse, PaginatedResponse, OrderStatus } from "../types/common";
 import { normalizePaginatedResponse } from "../utils/normalizePaginatedResponse";
+import { clientApi } from "./client-api";
 
-export const ordersApi = (api = createApi())=>({
+export const ordersApi = ()=>({
   create: async (data: CreateOrderData): Promise<Order> => {
-    const response = await api.post<any, ApiResponse<Order>>("/orders", data);
+    const response = await clientApi.post<any, ApiResponse<Order>>("/orders", data);
     return response.data!;
   },
 
@@ -13,12 +14,12 @@ export const ordersApi = (api = createApi())=>({
     page = 1,
     limit = 10
   ): Promise<PaginatedResponse<Order>> => {
-    const response = await api.get<any, ApiResponse<PaginatedResponse<Order>>>(
-      "/orders/my-orders",
-      {
-        params: { page, limit },
-      }
-    );
+    const response = await clientApi.get<
+      any,
+      ApiResponse<PaginatedResponse<Order>>
+    >("/orders/my-orders", {
+      params: { page, limit },
+    });
     return response.data!;
   },
 
@@ -27,15 +28,17 @@ export const ordersApi = (api = createApi())=>({
     limit?: number;
     status?: OrderStatus;
   }): Promise<PaginatedResponse<Order>> => {
-    const response = await api.get<any, ApiResponse<PaginatedResponse<Order>>>(
-      "/orders",
-      { params }
-    );
+    const response = await clientApi.get<
+      any,
+      ApiResponse<PaginatedResponse<Order>>
+    >("/orders", { params });
     return normalizePaginatedResponse<Order>(response.data!);
   },
 
   getById: async (id: string): Promise<Order> => {
-    const response = await api.get<any, ApiResponse<Order>>(`/orders/${id}`);
+    const response = await clientApi.get<any, ApiResponse<Order>>(
+      `/orders/${id}`
+    );
     return response.data!;
   },
 
@@ -44,7 +47,7 @@ export const ordersApi = (api = createApi())=>({
     status: OrderStatus,
     note?: string
   ): Promise<Order> => {
-    const response = await api.patch<any, ApiResponse<Order>>(
+    const response = await clientApi.patch<any, ApiResponse<Order>>(
       `/orders/${id}/status`,
       { status, note }
     );
@@ -52,7 +55,7 @@ export const ordersApi = (api = createApi())=>({
   },
 
   cancel: async (id: string): Promise<Order> => {
-    const response = await api.patch<any, ApiResponse<Order>>(
+    const response = await clientApi.patch<any, ApiResponse<Order>>(
       `/orders/${id}/cancel`
     );
     return response.data!;

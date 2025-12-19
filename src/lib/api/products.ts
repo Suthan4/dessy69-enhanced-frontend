@@ -2,8 +2,9 @@ import { createApi } from "./axios";
 import { Product, CreateProductData } from "../types/product";
 import { ApiResponse, PaginatedResponse } from "../types/common";
 import { normalizePaginatedResponse } from "../utils/normalizePaginatedResponse";
+import { clientApi } from "./client-api";
 
-export const productsApi = (api = createApi()) => ({
+export const productsApi = () => ({
   getAll: async (params?: {
     page?: number;
     limit?: number;
@@ -12,7 +13,7 @@ export const productsApi = (api = createApi()) => ({
     minPrice?: number;
     maxPrice?: number;
   }): Promise<PaginatedResponse<Product>> => {
-    const response = await api.get<
+    const response = await clientApi.get<
       any,
       ApiResponse<PaginatedResponse<Product>>
     >("/products", { params });
@@ -20,14 +21,14 @@ export const productsApi = (api = createApi()) => ({
   },
 
   getById: async (id: string): Promise<Product> => {
-    const response = await api.get<any, ApiResponse<Product>>(
+    const response = await clientApi.get<any, ApiResponse<Product>>(
       `/products/${id}`
     );
     return response.data!;
   },
 
   getBySlug: async (slug: string): Promise<Product> => {
-    const response = await api.get<any, ApiResponse<Product>>(
+    const response = await clientApi.get<any, ApiResponse<Product>>(
       `/products/slug/${slug}`
     );
     return response.data!;
@@ -38,7 +39,7 @@ export const productsApi = (api = createApi()) => ({
     page = 1,
     limit = 10
   ): Promise<PaginatedResponse<Product>> => {
-    const response = await api.get<
+    const response = await clientApi.get<
       any,
       ApiResponse<PaginatedResponse<Product>>
     >("/products/search", {
@@ -48,7 +49,7 @@ export const productsApi = (api = createApi()) => ({
   },
 
   create: async (data: CreateProductData): Promise<Product> => {
-    const response = await api.post<any, ApiResponse<Product>>(
+    const response = await clientApi.post<any, ApiResponse<Product>>(
       "/products",
       data
     );
@@ -59,7 +60,7 @@ export const productsApi = (api = createApi()) => ({
     id: string,
     data: Partial<CreateProductData>
   ): Promise<Product> => {
-    const response = await api.put<any, ApiResponse<Product>>(
+    const response = await clientApi.put<any, ApiResponse<Product>>(
       `/products/${id}`,
       data
     );
@@ -70,7 +71,7 @@ export const productsApi = (api = createApi()) => ({
     id: string,
     isAvailable: boolean
   ): Promise<Product> => {
-    const response = await api.patch<any, ApiResponse<Product>>(
+    const response = await clientApi.patch<any, ApiResponse<Product>>(
       `/products/${id}/availability`,
       { isAvailable }
     );
@@ -78,6 +79,6 @@ export const productsApi = (api = createApi()) => ({
   },
 
   delete: async (id: string): Promise<void> => {
-    await api.delete(`/products/${id}`);
+    await clientApi.delete(`/products/${id}`);
   },
 });

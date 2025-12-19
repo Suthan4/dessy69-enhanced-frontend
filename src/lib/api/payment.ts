@@ -1,6 +1,7 @@
 import { createApi } from "./axios";
 import { ApiResponse } from "../types/common";
 import { Order } from "../types/order";
+import { clientApi } from "./client-api";
 
 export interface PaymentOrderResponse {
   razorpayOrderId: string;
@@ -17,7 +18,7 @@ export interface VerifyPaymentData {
 
 export const paymentApi = (api = createApi()) => ({
   createOrder: async (orderId: string): Promise<PaymentOrderResponse> => {
-    const response = await api.post<any, ApiResponse<PaymentOrderResponse>>(
+    const response = await clientApi.post<any, ApiResponse<PaymentOrderResponse>>(
       "/payment/create-order",
       { orderId }
     );
@@ -25,7 +26,7 @@ export const paymentApi = (api = createApi()) => ({
   },
 
   verifyPayment: async (data: VerifyPaymentData): Promise<Order> => {
-    const response = await api.post<any, ApiResponse<Order>>(
+    const response = await clientApi.post<any, ApiResponse<Order>>(
       "/payment/verify",
       data
     );

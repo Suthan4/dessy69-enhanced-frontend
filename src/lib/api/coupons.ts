@@ -1,4 +1,3 @@
-import { createApi } from "./axios";
 import {
   Coupon,
   ValidateCouponData,
@@ -6,10 +5,11 @@ import {
 } from "../types/coupon";
 import { ApiResponse, PaginatedResponse } from "../types/common";
 import { normalizePaginatedResponse } from "../utils/normalizePaginatedResponse";
+import { clientApi } from "./client-api";
 
-export const couponsApi = (api = createApi()) => ({
+export const couponsApi = () => ({
   getAll: async (page = 1, limit = 10): Promise<PaginatedResponse<Coupon>> => {
-    const response = await api.get<any, ApiResponse<PaginatedResponse<Coupon>>>(
+    const response = await clientApi.get<any, ApiResponse<PaginatedResponse<Coupon>>>(
       "/coupons",
       {
         params: { page, limit },
@@ -21,7 +21,7 @@ export const couponsApi = (api = createApi()) => ({
   validate: async (
     data: ValidateCouponData
   ): Promise<CouponValidationResult> => {
-    const response = await api.post<any, ApiResponse<CouponValidationResult>>(
+    const response = await clientApi.post<any, ApiResponse<CouponValidationResult>>(
       "/coupons/validate",
       data
     );
@@ -29,12 +29,12 @@ export const couponsApi = (api = createApi()) => ({
   },
 
   create: async (data: Partial<Coupon>): Promise<Coupon> => {
-    const response = await api.post<any, ApiResponse<Coupon>>("/coupons", data);
+    const response = await clientApi.post<any, ApiResponse<Coupon>>("/coupons", data);
     return response.data!;
   },
 
   update: async (id: string, data: Partial<Coupon>): Promise<Coupon> => {
-    const response = await api.put<any, ApiResponse<Coupon>>(
+    const response = await clientApi.put<any, ApiResponse<Coupon>>(
       `/coupons/${id}`,
       data
     );
@@ -42,6 +42,6 @@ export const couponsApi = (api = createApi()) => ({
   },
 
   delete: async (id: string): Promise<void> => {
-    await api.delete(`/coupons/${id}`);
+    await clientApi.delete(`/coupons/${id}`);
   },
 });
