@@ -5,7 +5,9 @@ export const createApi = (serverCookies?: any) => {
   const baseURL =
     process.env.NODE_ENV === "production"
       ? "https://dessy69-new-backend.onrender.com/api"
-      : "/api";
+      : "https://localhost:5000/api";
+
+    console.log("baseURL", baseURL);
   const api = axios.create({
     baseURL,
     withCredentials: true,
@@ -19,13 +21,17 @@ export const createApi = (serverCookies?: any) => {
   });
 
   api.interceptors.request.use((config) => {
-       console.log('Request:', config.method?.toUpperCase(), config.url);
-    if (serverCookies && typeof serverCookies.get === "function") {
-      // SSR: attach Authorization header manually
-      const token = serverCookies.get("token")?.value;
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
+    console.log("Request:", config.method?.toUpperCase(), config.url);
+    // if (serverCookies && typeof serverCookies.get === "function") {
+    //   // SSR: attach Authorization header manually
+    //   const token = serverCookies.get("token")?.value;
+    //   if (token) {
+    //     config.headers.Authorization = `Bearer ${token}`;
+    //   }
+    // }
+    // ✅ SSR: forward cookies exactly as-is
+    if (serverCookies && typeof serverCookies.toString === "function") {
+      config.headers.Cookie = serverCookies.toString();
     }
     return config;
   });
