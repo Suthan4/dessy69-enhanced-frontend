@@ -1,7 +1,6 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
   images: {
     remotePatterns: [
       {
@@ -14,18 +13,18 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  // ✅ Only use rewrites in development
   async rewrites() {
-    return [
-      {
-        source: "/api/:path*",
-        destination:
-          process.env.NODE_ENV === "production"
-            ? "https://dessy69-new-backend.onrender.com/api/:path*" // ✅ Production backend
-            : "https://localhost:5000/api/:path*", // Development backend
-      },
-    ];
+    if (process.env.NODE_ENV === "development") {
+      return [
+        {
+          source: "/api/:path*",
+          destination: "http://localhost:5000/api/:path*",
+        },
+      ];
+    }
+    return []; // No rewrites in production
   },
-  // Enable HTTPS in development
 };
 
 export default nextConfig;
