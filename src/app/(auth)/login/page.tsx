@@ -1,21 +1,21 @@
 "use client";
 
-import React, { useState } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { Mail, Lock, ArrowRight } from 'lucide-react';
-import { authApi } from '@/lib/api/auth';
-import { useAuthStore } from '@/lib/store/authStore';
-import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
-import { toast } from 'sonner';
+import React, { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { Mail, Lock, ArrowRight } from "lucide-react";
+import { authApi } from "@/lib/api/auth";
+import { useAuthStore } from "@/lib/store/authStore";
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
+import { toast } from "sonner";
 
 const loginSchema = z.object({
-  email: z.string().email('Invalid email address'),
-  password: z.string().min(6, 'Password must be at least 6 characters'),
+  email: z.string().email("Invalid email address"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
 type LoginForm = z.infer<typeof loginSchema>;
@@ -38,17 +38,17 @@ export default function LoginPage() {
     try {
       const response = await authApi().login(data);
       setAuth(response);
-      toast.success('Login successful!');
+      toast.success("Login successful!");
       console.log("response", response);
-      
+
       // Redirect based on role
-      if (response.role === 'admin') {
-        router.push('/admin/dashboard');
+      if (response.role === "admin") {
+        router.push("/admin/dashboard");
       } else {
-        router.push('/menu');
+        router.push("/menu");
       }
     } catch (error: any) {
-      toast.error(error.message || 'Login failed');
+      toast.error(error.message || "Login failed");
     } finally {
       setIsLoading(false);
     }
@@ -71,7 +71,7 @@ export default function LoginPage() {
         <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-card p-8">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <Input
-              {...register('email')}
+              {...register("email")}
               type="email"
               label="Email Address"
               placeholder="you@example.com"
@@ -80,7 +80,7 @@ export default function LoginPage() {
             />
 
             <Input
-              {...register('password')}
+              {...register("password")}
               type="password"
               label="Password"
               placeholder="Enter your password"
@@ -93,15 +93,15 @@ export default function LoginPage() {
               isLoading={isLoading}
               className="w-full"
               size="lg"
+              rightIcon={<ArrowRight className="w-5 h-5" />}
             >
               Sign In
-              <ArrowRight className="ml-2 w-5 h-5" />
             </Button>
           </form>
 
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              Don't have an account?{' '}
+              Don't have an account?{" "}
               <Link
                 href="/register"
                 className="text-primary-600 hover:text-primary-700 font-medium"

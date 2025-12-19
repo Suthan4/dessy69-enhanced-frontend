@@ -119,9 +119,9 @@ export default function RegisterPage() {
               isLoading={isLoading}
               className="w-full"
               size="lg"
+              rightIcon={<ArrowRight className="w-5 h-5" />}
             >
               Create Account
-              <ArrowRight className="ml-2 w-5 h-5" />
             </Button>
           </form>
 
