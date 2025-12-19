@@ -1,4 +1,5 @@
 export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
 
 import { ShoppingBag, Package, Users, TrendingUp } from "lucide-react";
 import { ordersApi } from "@/lib/api/orders";
