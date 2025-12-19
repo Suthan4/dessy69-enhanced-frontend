@@ -1,4 +1,5 @@
-import React from "react";
+export const dynamic = "force-dynamic";
+
 import { ShoppingBag, Package, Users, TrendingUp } from "lucide-react";
 import { ordersApi } from "@/lib/api/orders";
 import { productsApi } from "@/lib/api/products";
@@ -16,7 +17,7 @@ export default async function AdminDashboard() {
   let ordersData;
   let productsData;
   try {
-     [ordersData, productsData] = await Promise.all([
+    [ordersData, productsData] = await Promise.all([
       ordersApi(api).getAll({ page: 1, limit: 10 }),
       productsApi(api).getAll({ page: 1, limit: 1 }),
     ]);
@@ -33,7 +34,6 @@ export default async function AdminDashboard() {
 
   console.log("orders", orders);
   console.log("ordersData", ordersData);
-  
 
   // Calculate stats
   // const totalRevenue = orders.reduce((sum, order) => sum + order.total, 0);
