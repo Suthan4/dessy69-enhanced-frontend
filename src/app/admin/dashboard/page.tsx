@@ -31,6 +31,10 @@ export default async function AdminDashboard() {
   const totalOrders = ordersData?.total || 0;
   const totalProducts = productsData?.total || 0;
 
+  console.log("orders", orders);
+  console.log("ordersData", ordersData);
+  
+
   // Calculate stats
   // const totalRevenue = orders.reduce((sum, order) => sum + order.total, 0);
   // const pendingOrders = orders.filter((o) => o.status === "pending").length;

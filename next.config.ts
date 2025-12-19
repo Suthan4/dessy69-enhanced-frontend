@@ -18,11 +18,10 @@ const nextConfig: NextConfig = {
     return [
       {
         source: "/api/:path*",
-        // destination:
-        //   process.env.NODE_ENV === "production"
-        //     ? "https://dessy69-new-backend.onrender.com/api/:path*" // ✅ Production backend
-        //     : "https://localhost:5000/api/:path*", // Development backend
-        destination: "https://dessy69-new-backend.onrender.com/api/:path*", // ✅ Production backend
+        destination:
+          process.env.NODE_ENV === "production"
+            ? "https://dessy69-new-backend.onrender.com/api/:path*" // ✅ Production backend
+            : "https://localhost:5000/api/:path*", // Development backend
       },
     ];
   },
