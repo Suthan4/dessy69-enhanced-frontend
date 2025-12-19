@@ -33,6 +33,7 @@ export default function CouponsPage() {
     try {
       const data = await couponsApi().getAll(1, 50);
       setCoupons(data.payload);
+      console.log("data",data);
     } catch (error) {
       toast.error("Failed to load coupons");
     } finally {
@@ -88,7 +89,7 @@ export default function CouponsPage() {
             Coupons
           </h1>
           <p className="text-gray-600 dark:text-gray-400 mt-1">
-            Manage discount coupons ({coupons.length})
+            Manage discount coupons ({coupons?.length})
           </p>
         </div>
         <Button onClick={() => setFormModal({ isOpen: true, coupon: null })}>
@@ -99,7 +100,7 @@ export default function CouponsPage() {
 
       {/* Coupons Grid */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {coupons.map((coupon) => (
+        {coupons?.map((coupon) => (
           <CouponCard
             key={coupon.id}
             coupon={coupon}
@@ -110,7 +111,7 @@ export default function CouponsPage() {
         ))}
       </div>
 
-      {coupons.length === 0 && (
+      {coupons?.length === 0 && (
         <Card>
           <div className="p-12 text-center">
             <Ticket className="w-16 h-16 mx-auto text-gray-300 dark:text-gray-700 mb-4" />

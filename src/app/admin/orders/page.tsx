@@ -15,7 +15,7 @@ import { OrderStatus } from "@/lib/types/common";
 import { ORDER_STATUS_COLORS, ORDER_STATUS_LABELS } from "@/lib/constants";
 
 export default function AdminOrdersPage() {
-  const [orders, setOrders] = useState<Order[]>([]);
+  const [orders, setOrders] = useState<any>();
   const [isLoading, setIsLoading] = useState(true);
   const [filter, setFilter] = useState<OrderStatus | "all">("all");
 
@@ -30,7 +30,7 @@ export default function AdminOrdersPage() {
         limit: 50,
         status: filter === "all" ? undefined : filter,
       });
-      setOrders(data.payload);
+      setOrders(data);
     } catch (error) {
       toast.error("Failed to load orders");
     } finally {
@@ -65,6 +65,7 @@ export default function AdminOrdersPage() {
     { value: OrderStatus.DELIVERED, label: "Delivered" },
     { value: OrderStatus.CANCELLED, label: "Cancelled" },
   ];
+  console.log("orders", orders);
 
   return (
     <div className="space-y-6">
@@ -97,7 +98,7 @@ export default function AdminOrdersPage() {
       </div>
 
       {/* Orders Grid */}
-      {orders.length === 0 ? (
+      {orders?.length === 0 ? (
         <Card>
           <div className="p-12 text-center">
             <Package className="w-16 h-16 mx-auto text-gray-300 dark:text-gray-700 mb-4" />
@@ -106,7 +107,7 @@ export default function AdminOrdersPage() {
         </Card>
       ) : (
         <div className="grid gap-4 lg:grid-cols-2">
-          {orders.map((order) => (
+          {orders?.payload?.map((order:Order) => (
             <OrderManagementCard
               key={order.id}
               order={order}
@@ -223,12 +224,12 @@ function OrderManagementCard({
             onClick={() => setIsExpanded(!isExpanded)}
             className="text-sm text-primary-600 hover:text-primary-700 font-medium"
           >
-            {isExpanded ? "Hide" : "View"} {order.items.length} item
-            {order.items.length > 1 ? "s" : ""}
+            {isExpanded ? "Hide" : "View"} {order.items?.length} item
+            {order.items?.length > 1 ? "s" : ""}
           </button>
           {isExpanded && (
             <div className="mt-2 space-y-2">
-              {order.items.map((item, index) => (
+              {order.items?.map((item, index) => (
                 <div
                   key={index}
                   className="flex justify-between text-sm py-2 border-b border-gray-200 dark:border-gray-700 last:border-0"

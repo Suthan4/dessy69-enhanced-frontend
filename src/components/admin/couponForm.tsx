@@ -64,7 +64,12 @@ export const CouponForm: React.FC<CouponFormProps> = ({
   const handleFormSubmit = async (data: CouponFormData) => {
     setIsSubmitting(true);
     try {
-      await onSubmit(data);
+       const payload = {
+         ...data,
+         startDate: new Date(data.startDate).toISOString(),
+         endDate: new Date(data.endDate).toISOString(),
+       };
+      await onSubmit(payload);
     } catch (error) {
       // Error handled by parent
     } finally {

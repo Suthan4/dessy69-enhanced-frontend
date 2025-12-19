@@ -5,6 +5,7 @@ import {
   CouponValidationResult,
 } from "../types/coupon";
 import { ApiResponse, PaginatedResponse } from "../types/common";
+import { normalizePaginatedResponse } from "../utils/normalizePaginatedResponse";
 
 export const couponsApi = (api = createApi()) => ({
   getAll: async (page = 1, limit = 10): Promise<PaginatedResponse<Coupon>> => {
@@ -14,7 +15,7 @@ export const couponsApi = (api = createApi()) => ({
         params: { page, limit },
       }
     );
-    return response.data!;
+    return normalizePaginatedResponse<Coupon>(response.data!);
   },
 
   validate: async (

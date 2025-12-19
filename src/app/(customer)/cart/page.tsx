@@ -81,8 +81,7 @@ export default function CartPage() {
             Add some delicious items to get started
           </p>
           <Link href="/menu">
-            <Button>
-              <ArrowLeft className="mr-2 w-4 h-4" />
+            <Button leftIcon={<ArrowLeft className="w-4 h-4" />}>
               Browse Menu
             </Button>
           </Link>

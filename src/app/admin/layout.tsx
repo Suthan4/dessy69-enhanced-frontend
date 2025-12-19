@@ -3,8 +3,9 @@
 import React, { useState } from "react";
 import { Menu } from "lucide-react";
 import { Sidebar } from "@/components/admin/sideBar";
-import { useAuthStore } from "@/lib/store/authStore";
+import { useAuthStore, useHasHydrated } from "@/lib/store/authStore";
 import { redirect } from "next/navigation";
+import { Loading } from "@/components/ui/Loading";
 
 export default function AdminLayout({
   children,
@@ -13,7 +14,13 @@ export default function AdminLayout({
 }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const { user, isAuthenticated } = useAuthStore();
-
+  const hasHydrated = useHasHydrated();
+  console.log("user", user);
+  console.log("isAuthenticated", isAuthenticated);
+  // Show loading while hydrating
+  if (!hasHydrated) {
+    return <Loading fullScreen text="Loading..." />;
+  }
   // Protect admin routes
   if (!isAuthenticated || user?.role !== "admin") {
     redirect("/login");

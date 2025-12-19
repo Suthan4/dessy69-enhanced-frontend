@@ -63,7 +63,7 @@ export default function OrderTrackingPage() {
     return null;
   }
 
-  const canCancel = ["pending", "confirmed"].includes(order.status);
+  const canCancel = ["pending", "confirmed"].includes(order?.status);
 
   return (
     <div className="min-h-screen pb-12">
@@ -81,7 +81,7 @@ export default function OrderTrackingPage() {
               Order Details
             </h1>
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              Order #{order.id.slice(0, 8)}
+              Order #{order?.id.slice(0, 8)}
             </p>
           </div>
         </div>
@@ -136,7 +136,7 @@ export default function OrderTrackingPage() {
               Order Items
             </h2>
             <div className="space-y-3">
-              {order.items.map((item, index) => (
+              {order.items?.map((item, index) => (
                 <div
                   key={index}
                   className="flex justify-between items-start py-3 border-b border-gray-200 dark:border-gray-800 last:border-0"
@@ -223,8 +223,8 @@ function OrderStatusTimeline({ order }: { order: Order }) {
     { status: "confirmed", label: "Confirmed", icon: CheckCircle2 },
     { status: "preparing", label: "Preparing", icon: Clock },
     { status: "ready", label: "Ready", icon: CheckCircle2 },
-    { status: "out_for_delivery", label: "Out for Delivery", icon: Package },
-    { status: "delivered", label: "Delivered", icon: CheckCircle2 },
+    { status: "out_for_delivery", label: "Plated & Ready", icon: Package },
+    { status: "delivered", label: "Served", icon: CheckCircle2 },
   ];
 
   const currentStepIndex = statusSteps.findIndex(

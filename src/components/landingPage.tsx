@@ -149,20 +149,20 @@ export default function LandingPage() {
               transition={{ duration: 0.5, delay: 0.3 }}
               className="flex flex-col gap-4 sm:flex-row sm:justify-center"
             >
-              {/* <Link href="/menu"> */}
-              <Button
-                size="lg"
-                className="group w-full sm:w-auto flex"
-                rightIcon={
-                  <ArrowRight
-                    size={20}
-                    className="ml-2 transition-transform group-hover:translate-x-1"
-                  />
-                }
-              >
-                Explore Menu
-              </Button>
-              {/* </Link> */}
+              <Link href="/menu">
+                <Button
+                  size="lg"
+                  className="group w-full sm:w-auto flex"
+                  rightIcon={
+                    <ArrowRight
+                      size={20}
+                      className="ml-2 transition-transform group-hover:translate-x-1"
+                    />
+                  }
+                >
+                  Explore Menu
+                </Button>
+              </Link>
               <Link href="/menu">
                 <Button
                   variant="outline"

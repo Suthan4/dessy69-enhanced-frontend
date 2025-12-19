@@ -14,6 +14,7 @@ import { Modal } from "@/components/ui/Modal";
 import { toast } from "sonner";
 import Image from "next/image";
 
+
 export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -28,7 +29,11 @@ export default function ProductsPage() {
 
   const loadProducts = async () => {
     try {
-      const data = await productsApi().getAll({ page: 1, limit: 50 });
+      const data = await productsApi().getAll({
+        page: 1,
+        limit: 10,
+        isAvailable: true,
+      });
       setProducts(data.payload);
     } catch (error) {
       toast.error("Failed to load products");
@@ -75,7 +80,7 @@ export default function ProductsPage() {
             Products
           </h1>
           <p className="text-gray-600 dark:text-gray-400 mt-1">
-            Manage your menu items ({products.length})
+            Manage your menu items ({products?.length})
           </p>
         </div>
         <Link href="/admin/products/new">
@@ -88,7 +93,7 @@ export default function ProductsPage() {
 
       {/* Products Grid */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {products.map((product) => (
+        {products.map((product:any) => (
           <Card key={product.id}>
             <div className="p-4">
               {/* Product Image */}

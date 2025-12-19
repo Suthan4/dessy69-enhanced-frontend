@@ -89,6 +89,8 @@ export default function CheckoutPage() {
             clearCart();
             toast.success("Payment successful!");
             router.push(`/orders/${orderId}`);
+            console.log("orderId",orderId);
+            
           } catch (error) {
             toast.error("Payment verification failed");
           }
@@ -142,11 +144,6 @@ export default function CheckoutPage() {
   };
 
   const total = getTotal();
-
-  if (items.length === 0) {
-    router.push("/menu");
-    return null;
-  }
 
   return (
     <div className="min-h-screen pb-32">
@@ -206,7 +203,7 @@ export default function CheckoutPage() {
                 Order Summary
               </h2>
               <div className="space-y-2">
-                {items.map((item) => (
+                {items?.map((item) => (
                   <div
                     key={`${item.productId}-${item.variantId}`}
                     className="flex justify-between text-sm"

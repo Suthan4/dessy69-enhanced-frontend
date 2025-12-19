@@ -34,7 +34,7 @@ export default function OrdersPage() {
     return <Loading fullScreen text="Loading orders..." />;
   }
 
-  if (orders.length === 0) {
+  if (orders?.length === 0) {
     return (
       <div className="min-h-screen flex items-center justify-center px-4">
         <div className="text-center">
@@ -64,7 +64,7 @@ export default function OrdersPage() {
         </h1>
 
         <div className="space-y-4">
-          {orders.map((order) => (
+          {orders?.map((order) => (
             <OrderCard key={order.id} order={order} />
           ))}
         </div>

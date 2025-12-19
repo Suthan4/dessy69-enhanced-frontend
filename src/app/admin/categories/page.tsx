@@ -30,7 +30,7 @@ export default function CategoriesPage() {
 
   const loadCategories = async () => {
     try {
-      const data = await categoriesApi.getAll();
+      const data = await categoriesApi().getAll();
       setCategories(data);
     } catch (error) {
       toast.error("Failed to load categories");
@@ -42,10 +42,10 @@ export default function CategoriesPage() {
   const handleSubmit = async (data: any) => {
     try {
       if (formModal.category) {
-        await categoriesApi.update(formModal.category.id, data);
+        await categoriesApi().update(formModal.category.id, data);
         toast.success("Category updated successfully");
       } else {
-        await categoriesApi.create(data);
+        await categoriesApi().create(data);
         toast.success("Category created successfully");
       }
       setFormModal({ isOpen: false, category: null });
@@ -60,7 +60,7 @@ export default function CategoriesPage() {
     if (!deleteModal.category) return;
 
     try {
-      await categoriesApi.delete(deleteModal.category.id);
+      await categoriesApi().delete(deleteModal.category.id);
       toast.success("Category deleted successfully");
       setDeleteModal({ isOpen: false, category: null });
       loadCategories();

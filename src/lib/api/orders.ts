@@ -1,6 +1,7 @@
 import { createApi } from "./axios";
 import { Order, CreateOrderData } from "../types/order";
 import { ApiResponse, PaginatedResponse, OrderStatus } from "../types/common";
+import { normalizePaginatedResponse } from "../utils/normalizePaginatedResponse";
 
 export const ordersApi = (api = createApi())=>({
   create: async (data: CreateOrderData): Promise<Order> => {
@@ -30,7 +31,7 @@ export const ordersApi = (api = createApi())=>({
       "/orders",
       { params }
     );
-    return response.data!;
+    return normalizePaginatedResponse<Order>(response.data!);
   },
 
   getById: async (id: string): Promise<Order> => {
