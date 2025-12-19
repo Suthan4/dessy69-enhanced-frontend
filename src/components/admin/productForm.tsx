@@ -56,7 +56,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
     control,
     watch,
     formState: { errors },
-  } = useForm<ProductFormData>({
+  } = useForm({
     resolver: zodResolver(productSchema),
     defaultValues: initialData
       ? {
