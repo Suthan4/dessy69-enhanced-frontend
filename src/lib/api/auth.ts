@@ -1,4 +1,3 @@
-import { createApi } from "./axios";
 import { AuthResponse, LoginCredentials, RegisterData, User } from "../types/auth";
 import { ApiResponse } from "../types/common";
 import { clientApi } from "./client-api";

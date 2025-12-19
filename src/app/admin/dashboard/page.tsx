@@ -7,8 +7,6 @@ import { StatsCard } from "@/components/admin/statsCard";
 import { OrderTable } from "@/components/admin/orderTable";
 import { Card } from "@/components/ui/Card";
 import { formatCurrency } from "@/lib/utils/formatters";
-import { cookies } from "next/headers";
-import { createApi } from "@/lib/api/axios";
 import { createServerApi } from "@/lib/api/server-api";
 
 export default async function AdminDashboard() {

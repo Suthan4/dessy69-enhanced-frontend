@@ -1,4 +1,3 @@
-import { createApi } from "./axios";
 import { Product, CreateProductData } from "../types/product";
 import { ApiResponse, PaginatedResponse } from "../types/common";
 import { normalizePaginatedResponse } from "../utils/normalizePaginatedResponse";

@@ -1,4 +1,3 @@
-import { createApi } from "./axios";
 import { Category, CategoryTree } from "../types/category";
 import { ApiResponse } from "../types/common";
 import { clientApi } from "./client-api";
