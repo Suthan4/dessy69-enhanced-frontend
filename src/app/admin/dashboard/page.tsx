@@ -1,5 +1,4 @@
 export const dynamic = "force-dynamic";
-export const runtime = "nodejs";
 
 import { ShoppingBag, Package, Users, TrendingUp } from "lucide-react";
 import { ordersApi } from "@/lib/api/orders";
@@ -12,7 +11,7 @@ import { cookies } from "next/headers";
 import { createApi } from "@/lib/api/axios";
 
 export default async function AdminDashboard() {
-    console.log("🚨 ADMIN DASHBOARD SSR HIT", new Date().toISOString());
+  console.log("🚨 ADMIN DASHBOARD SSR HIT", new Date().toISOString());
 
   const cookiesStore = await cookies();
   const api = createApi(cookiesStore);
