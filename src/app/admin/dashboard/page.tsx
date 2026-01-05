@@ -1,8 +1,6 @@
 export const dynamic = "force-dynamic";
 
 import { ShoppingBag, Package, Users, TrendingUp } from "lucide-react";
-import { ordersApi } from "@/lib/api/orders";
-import { productsApi } from "@/lib/api/products";
 import { StatsCard } from "@/components/admin/statsCard";
 import { OrderTable } from "@/components/admin/orderTable";
 import { Card } from "@/components/ui/Card";
@@ -24,15 +22,12 @@ export default async function AdminDashboard() {
   } catch (error) {
     console.error("Error fetching menu data:", error);
     // fallback so RSC doesn’t crash
-    productsData = { products: [], total: 0 };
-    ordersData = { orders: [], total: 0 };
+    ordersData = { data: { data: { orders: [], total: 0 } } };
+    productsData = { data: { total: 0 } };
   }
-console.log("orderData",ordersData);
-
   const orders = ordersData.data.data.orders || [];
   const totalOrders = ordersData?.data.data.total || 0;
   const totalProducts = productsData?.data.total || 0;
-
 
   // Calculate stats
   // const totalRevenue = orders.reduce((sum, order) => sum + order.total, 0);
