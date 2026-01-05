@@ -22,7 +22,7 @@ async function MenuContent({ searchParams }: MenuPageProps) {
   const page = parseInt(params.page || "1");
 
   // Fetch data
-  let productsData;
+  let productsData: { items: any[]; total: number };
   let categories: any;
   try {
     [productsData, categories] = await Promise.all([
@@ -39,11 +39,11 @@ async function MenuContent({ searchParams }: MenuPageProps) {
   } catch (error: any) {
     console.error("Error fetching menu data:", error);
     // fallback so RSC doesn’t crash
-    productsData = { payload: [], total: 0 };
+    productsData = { items: [], total: 0 };
     categories = [];
   }
 
-  const products = productsData.payload || [];
+  const products = productsData.items || [];
   const total = productsData.total || 0;
   return (
     <div className="min-h-screen pb-24">

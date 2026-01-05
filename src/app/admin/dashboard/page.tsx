@@ -25,10 +25,11 @@ export default async function AdminDashboard() {
     console.error("Error fetching menu data:", error);
     // fallback so RSC doesn’t crash
     productsData = { products: [], total: 0 };
-    ordersData = { payload: [], total: 0 };
+    ordersData = { orders: [], total: 0 };
   }
+console.log("orderData",ordersData);
 
-  const orders = ordersData?.data.data.orders || [];
+  const orders = ordersData.data.data.orders || [];
   const totalOrders = ordersData?.data.data.total || 0;
   const totalProducts = productsData?.data.total || 0;
 

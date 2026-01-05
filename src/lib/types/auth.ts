@@ -9,6 +9,9 @@ export interface User {
   address?: string;
 }
 
+export interface Response<T> {
+  data:T
+}
 export interface AuthResponse {
   id: string;
   email: string;
@@ -17,6 +20,8 @@ export interface AuthResponse {
   phone?: string;
   address?: string;
 }
+
+
 
 export interface LoginCredentials {
   email: string;

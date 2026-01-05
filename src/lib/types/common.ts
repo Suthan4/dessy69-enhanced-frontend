@@ -1,5 +1,5 @@
-export interface ApiResponse<T = any> {
-  success: boolean;
+export interface  ApiResponse<T = any> {
+  success?: boolean;
   data?: T;
   message?: string;
   errors?: ValidationError[];

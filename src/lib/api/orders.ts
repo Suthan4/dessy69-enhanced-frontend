@@ -3,9 +3,12 @@ import { ApiResponse, PaginatedResponse, OrderStatus } from "../types/common";
 import { normalizePaginatedResponse } from "../utils/normalizePaginatedResponse";
 import { clientApi } from "./client-api";
 
-export const ordersApi = ()=>({
+export const ordersApi = () => ({
   create: async (data: CreateOrderData): Promise<Order> => {
-    const response = await clientApi.post<any, ApiResponse<Order>>("/orders", data);
+    const response = await clientApi.post<any, ApiResponse<Order>>(
+      "/orders",
+      data
+    );
     return response.data!;
   },
 
@@ -26,11 +29,8 @@ export const ordersApi = ()=>({
     page?: number;
     limit?: number;
     status?: OrderStatus;
-  }): Promise<PaginatedResponse<Order>> => {
-    const response = await clientApi.get<
-      any,
-      ApiResponse<PaginatedResponse<Order>>
-    >("/orders", { params });
+  }) => {
+    const response = await clientApi.get("/orders", { params });
     return normalizePaginatedResponse<Order>(response.data!);
   },
 

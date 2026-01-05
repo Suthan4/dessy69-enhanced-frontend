@@ -6,7 +6,7 @@ import { Category } from "@/lib/types/category";
 import { cn } from "@/lib/utils/cn";
 
 interface CategoryFilterProps {
-  categories: Category[];
+  categories: any;
 }
 
 export const CategoryFilter: React.FC<CategoryFilterProps> = ({
@@ -40,9 +40,9 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
         >
           All Items
         </button>
-        {categories
-          .filter((cat) => cat.level === 0)
-          .map((category) => (
+        {categories?.data
+          .filter((cat:Category) => cat.level === 0)
+          .map((category:Category) => (
             <button
               key={category.id}
               onClick={() => handleCategoryClick(category.id)}

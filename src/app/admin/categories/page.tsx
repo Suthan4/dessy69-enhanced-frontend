@@ -13,7 +13,7 @@ import { toast } from "sonner";
 import { CategoryForm } from "../../../components/admin/categoryForm";
 
 export default function CategoriesPage() {
-  const [categories, setCategories] = useState<Category[]>([]);
+  const [categories, setCategories] = useState<any>();
   const [isLoading, setIsLoading] = useState(true);
   const [formModal, setFormModal] = useState<{
     isOpen: boolean;
@@ -73,9 +73,12 @@ export default function CategoriesPage() {
     return <Loading fullScreen text="Loading categories..." />;
   }
 
+  console.log("categories", categories);
   // Group categories by level
-  const rootCategories = categories.filter((cat) => cat.level === 0);
-  const childCategories = categories.filter((cat) => cat.level > 0);
+  const rootCategories = categories?.data?.filter((cat:Category) => cat.level === 0);
+  const childCategories = categories?.data?.filter(
+    (cat: Category) => cat.level > 0
+  );
 
   return (
     <div className="space-y-6">
@@ -86,7 +89,7 @@ export default function CategoriesPage() {
             Categories
           </h1>
           <p className="text-gray-600 dark:text-gray-400 mt-1">
-            Manage menu categories ({categories.length})
+            Manage menu categories ({categories?.length})
           </p>
         </div>
         <Button onClick={() => setFormModal({ isOpen: true, category: null })}>
@@ -101,7 +104,7 @@ export default function CategoriesPage() {
           Main Categories
         </h2>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {rootCategories.map((category) => (
+          {rootCategories?.map((category: Category) => (
             <CategoryCard
               key={category.id}
               category={category}
@@ -113,13 +116,13 @@ export default function CategoriesPage() {
       </div>
 
       {/* Child Categories */}
-      {childCategories.length > 0 && (
+      {childCategories?.length > 0 && (
         <div>
           <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">
             Sub Categories
           </h2>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {childCategories.map((category) => (
+            {childCategories?.map((category: Category) => (
               <CategoryCard
                 key={category.id}
                 category={category}
@@ -140,7 +143,7 @@ export default function CategoriesPage() {
         <CategoryForm
           onSubmit={handleSubmit}
           initialData={formModal.category || undefined}
-          categories={categories}
+          categories={categories?.data}
         />
       </Modal>
 

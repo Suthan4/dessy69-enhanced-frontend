@@ -1,7 +1,7 @@
 import { Product, CreateProductData } from "../types/product";
 import { ApiResponse, PaginatedResponse } from "../types/common";
-import { normalizePaginatedResponse } from "../utils/normalizePaginatedResponse";
 import { clientApi } from "./client-api";
+import { normalizePaginatedResponse } from "../utils/normalizePaginatedResponse";
 
 export const productsApi = () => ({
   getAll: async (params?: {
@@ -11,11 +11,8 @@ export const productsApi = () => ({
     isAvailable?: boolean;
     minPrice?: number;
     maxPrice?: number;
-  }): Promise<PaginatedResponse<Product>> => {
-    const response = await clientApi.get<
-      any,
-      ApiResponse<PaginatedResponse<Product>>
-    >("/products", { params });
+  }) => {
+    const response = await clientApi.get("/products", { params });
     return normalizePaginatedResponse<Product>(response.data!);
   },
 
@@ -33,15 +30,8 @@ export const productsApi = () => ({
     return response.data!;
   },
 
-  search: async (
-    query: string,
-    page = 1,
-    limit = 10
-  ): Promise<PaginatedResponse<Product>> => {
-    const response = await clientApi.get<
-      any,
-      ApiResponse<PaginatedResponse<Product>>
-    >("/products/search", {
+  search: async (query: string, page = 1, limit = 10) => {
+    const response = await clientApi.get("/products/search", {
       params: { q: query, page, limit },
     });
     return response.data!;

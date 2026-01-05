@@ -34,7 +34,7 @@ export default function ProductsPage() {
         limit: 10,
         isAvailable: true,
       });
-      setProducts(data.payload);
+      setProducts(data.items);
     } catch (error) {
       toast.error("Failed to load products");
     } finally {

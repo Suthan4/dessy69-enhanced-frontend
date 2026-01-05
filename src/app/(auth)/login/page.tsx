@@ -37,12 +37,12 @@ export default function LoginPage() {
     setIsLoading(true);
     try {
       const response = await authApi().login(data);
-      setAuth(response);
+      setAuth(response.data!);
       toast.success("Login successful!");
       console.log("response", response);
 
       // Redirect based on role
-      if (response.role === "admin") {
+      if (response.data?.role === "admin") {
         router.push("/admin/dashboard");
       } else {
         router.push("/menu");

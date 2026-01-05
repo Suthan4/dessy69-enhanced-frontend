@@ -30,7 +30,9 @@ export default function AdminOrdersPage() {
         limit: 50,
         status: filter === "all" ? undefined : filter,
       });
-      setOrders(data);
+      console.log("data",data);
+      
+      setOrders(data.items);
     } catch (error) {
       toast.error("Failed to load orders");
     } finally {
@@ -107,7 +109,7 @@ export default function AdminOrdersPage() {
         </Card>
       ) : (
         <div className="grid gap-4 lg:grid-cols-2">
-          {orders?.payload?.map((order:Order) => (
+          {orders?.map((order:Order) => (
             <OrderManagementCard
               key={order.id}
               order={order}

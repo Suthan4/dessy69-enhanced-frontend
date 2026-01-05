@@ -1,16 +1,33 @@
-import { PaginatedResponse } from "../types/common";
+const LIST_KEYS = [
+  "items",
+  "orders",
+  "products",
+  "users",
+  "categories",
+  "coupons",
+  "reviews",
+];
 
-export function normalizePaginatedResponse<T>(raw: any): PaginatedResponse<T> {
-  const key = Object.keys(raw).find((k) => Array.isArray(raw[k]));
+export function normalizePaginatedResponse<T>(apiResponse: any): {
+  items: T[];
+  total: number;
+} {
+  // Support ApiResponse wrapper
+  const data = apiResponse?.data ?? apiResponse;
 
-  if (!key) {
-    throw new Error("Invalid paginated response shape");
+  const listKey = LIST_KEYS.find((key) => Array.isArray(data?.[key]));
+
+  if (!listKey) {
+    console.error(
+      "Invalid paginated response, keys found:",
+      Object.keys(data),
+      apiResponse
+    );
+    return { items: [], total: 0 };
   }
 
   return {
-    payload: raw[key],
-    total: raw.total,
-    page: raw.page,
-    limit: raw.limit,
+    items: data[listKey],
+    total: typeof data.total === "number" ? data.total : 0,
   };
 }

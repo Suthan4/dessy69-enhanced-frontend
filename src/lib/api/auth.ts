@@ -6,13 +6,13 @@ export const authApi = () => ({
   login: async (
     credentials: LoginCredentials,
     signal?: AbortSignal
-  ): Promise<AuthResponse> => {
-    const response = await clientApi.post<any, ApiResponse<AuthResponse>>(
+  ): Promise<ApiResponse<AuthResponse>> => {
+    const response = await clientApi.post<ApiResponse<AuthResponse>>(
       "/auth/login",
       credentials,
       { signal }
     );
-    return response.data!;
+    return response.data;
   },
   register: async (data: RegisterData): Promise<AuthResponse> => {
     const response = await clientApi.post<any, ApiResponse<AuthResponse>>(

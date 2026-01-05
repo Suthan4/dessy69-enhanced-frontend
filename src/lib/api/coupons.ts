@@ -8,8 +8,8 @@ import { normalizePaginatedResponse } from "../utils/normalizePaginatedResponse"
 import { clientApi } from "./client-api";
 
 export const couponsApi = () => ({
-  getAll: async (page = 1, limit = 10): Promise<PaginatedResponse<Coupon>> => {
-    const response = await clientApi.get<any, ApiResponse<PaginatedResponse<Coupon>>>(
+  getAll: async (page = 1, limit = 10) => {
+    const response = await clientApi.get(
       "/coupons",
       {
         params: { page, limit },
@@ -20,8 +20,8 @@ export const couponsApi = () => ({
 
   validate: async (
     data: ValidateCouponData
-  ): Promise<CouponValidationResult> => {
-    const response = await clientApi.post<any, ApiResponse<CouponValidationResult>>(
+  ) => {
+    const response = await clientApi.post(
       "/coupons/validate",
       data
     );

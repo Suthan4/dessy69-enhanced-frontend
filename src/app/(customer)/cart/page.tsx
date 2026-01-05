@@ -50,12 +50,12 @@ export default function CartPage() {
         categoryIds: [],
       });
 
-      if (result.valid) {
-        applyCoupon(couponInput, result.discount);
+      if (result?.data?.valid) {
+        applyCoupon(couponInput, result?.data?.discount);
         toast.success('Coupon applied successfully!');
         setCouponInput('');
       } else {
-        toast.error(result.reason || 'Invalid coupon');
+        toast.error(result?.data?.reason || 'Invalid coupon');
       }
     } catch (error: any) {
       toast.error(error.message || 'Failed to validate coupon');
