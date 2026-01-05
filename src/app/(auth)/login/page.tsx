@@ -43,7 +43,8 @@ export default function LoginPage() {
 
       // Redirect based on role
       if (response.data?.role === "admin") {
-        router.push("/admin/dashboard");
+        // router.push("/admin/dashboard");
+        window.location.href = "/admin/dashboard";
       } else {
         router.push("/menu");
       }
