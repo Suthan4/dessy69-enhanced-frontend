@@ -32,7 +32,7 @@ export default function CouponsPage() {
   const loadCoupons = async () => {
     try {
       const data = await couponsApi().getAll(1, 50);
-      setCoupons(data.payload);
+      setCoupons(data.items);
       console.log("data",data);
     } catch (error) {
       toast.error("Failed to load coupons");
