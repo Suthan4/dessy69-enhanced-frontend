@@ -17,23 +17,32 @@ export default async function AdminDashboard() {
   try {
     [ordersData, productsData] = await Promise.all([
       api.get("/orders", { params: { page: 1, limit: 10 } }),
-      api.get("/products", { params: { page: 1, limit: 1 } }),
+      api.get("/products", {
+        params: { page: 1, limit: 10, isAvailable: true },
+      }),
     ]);
-  } catch (error) {
+  } catch (error:any) {
     console.error("Error fetching menu data:", error);
+    console.error("SSR API FAILED", {
+      code: error.code,
+      message: error.message,
+      status: error.response?.status,
+    });
     // fallback so RSC doesn’t crash
     ordersData = { data: { data: { orders: [], total: 0 } } };
     productsData = { data: { total: 0 } };
   }
   const orders = ordersData.data.data.orders || [];
   const totalOrders = ordersData?.data.data.total || 0;
-  const totalProducts = productsData?.data.total || 0;
+  const totalProducts = productsData?.data?.data?.total || 0;
 
   // Calculate stats
   // const totalRevenue = orders.reduce((sum, order) => sum + order.total, 0);
   // const pendingOrders = orders.filter((o) => o.status === "pending").length;
   const totalRevenue = 1223;
   const pendingOrders = 2;
+  console.log("totalOrders", totalOrders);
+  console.log("productsData", productsData?.data?.data?.total);
 
   return (
     <div className="space-y-6">
