@@ -20,8 +20,8 @@ export default function EditProductPage() {
 
   const loadProduct = async () => {
     try {
-      const data = await productsApi().getById(params.id as string);
-      setProduct(data);
+      const products = await productsApi().getById(params.id as string);
+      setProduct(products.data);
     } catch (error) {
       toast.error('Failed to load product');
       router.push('/admin/products');
@@ -48,6 +48,8 @@ export default function EditProductPage() {
   if (!product) {
     return null;
   }
+  console.log("product", product);
+  
 
   return (
     <div className="space-y-6">

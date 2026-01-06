@@ -16,10 +16,8 @@ export const productsApi = () => ({
     return normalizePaginatedResponse<Product>(response.data!);
   },
 
-  getById: async (id: string): Promise<Product> => {
-    const response = await clientApi.get<any, ApiResponse<Product>>(
-      `/products/${id}`
-    );
+  getById: async (id: string) => {
+    const response = await clientApi.get(`/products/${id}`);
     return response.data!;
   },
 

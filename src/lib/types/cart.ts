@@ -7,6 +7,7 @@ export interface CartItem {
   quantity: number;
   price: number;
   image: string;
+  ingredients?: CartItemIngredient[]; // newly added
 }
 
 export interface Cart {
@@ -16,4 +17,10 @@ export interface Cart {
   deliveryCharge: number;
   total: number;
   couponCode?: string;
+}
+
+export interface CartItemIngredient {
+  id: string;
+  name: string;
+  additionalPrice: number;
 }

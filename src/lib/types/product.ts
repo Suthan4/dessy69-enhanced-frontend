@@ -1,3 +1,24 @@
+export interface NutritionInfo {
+  calories?: number;
+  protein?: number;
+  carbs?: number;
+  fat?: number;
+}
+
+export interface Ingredient {
+  _id: string;
+  name: string;
+  quantity?: string;
+  isOptional: boolean;
+  additionalPrice?: number;
+  allergens?: string[];
+}
+
+export interface ProductMetadata {
+  shelfLife?: string;
+  storageInstructions?: string;
+  countryOfOrigin?: string;
+}
 export interface ProductVariant {
   id: string;
   name: string;
@@ -15,11 +36,12 @@ export interface Product {
   categoryId: string;
   basePrice: number;
   sellingPrice: number;
-  isAvailable: boolean;
   variants: ProductVariant[];
   images: string[];
-  ingredients: string[];
-  nutritionInfo?: any;
+  ingredients: Ingredient[];
+  nutrition?: NutritionInfo;
+  metadata?: ProductMetadata;
+  isAvailable: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -33,5 +55,7 @@ export interface CreateProductData {
   sellingPrice: number;
   variants: Omit<ProductVariant, "id">[];
   images?: string[];
-  ingredients?: string[];
+  ingredients?: Ingredient[];
+  nutrition?: NutritionInfo;
+  metadata?: ProductMetadata;
 }

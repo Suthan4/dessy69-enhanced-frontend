@@ -110,9 +110,10 @@ export default function CartPage() {
           {items.map((item) => (
             <Card key={`${item.productId}-${item.variantId}`}>
               <div className="flex gap-4 p-4">
+                {/* Product Image */}
                 <div className="relative w-20 h-20 rounded-xl overflow-hidden bg-gray-100 dark:bg-gray-800 flex-shrink-0">
                   <Image
-                    src={item.image}
+                    src={item.image || "/images/placeholder.png"}
                     alt={item.productName}
                     fill
                     className="object-cover"
@@ -120,21 +121,44 @@ export default function CartPage() {
                   />
                 </div>
 
+                {/* Product Info */}
                 <div className="flex-1 min-w-0">
                   <h3 className="font-semibold text-gray-900 dark:text-gray-100">
                     {item.productName}
                   </h3>
+
+                  {/* Variant */}
                   {item.variantName && (
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                      {item.variantName} {item.variantSize && `(${item.variantSize})`}
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                      <span className="font-medium">Size:</span>{" "}
+                      {item.variantName}{" "}
+                      {item.variantSize && `(${item.variantSize})`}
                     </p>
                   )}
+
+                  {/* Ingredients */}
+                  {item.ingredients && item.ingredients.length > 0 && (
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                      <span className="font-medium">Ingredients:</span>{" "}
+                      {item.ingredients
+                        .map(
+                          (ing) =>
+                            ing.name +
+                            (ing.additionalPrice
+                              ? ` (+${formatCurrency(ing.additionalPrice)})`
+                              : "")
+                        )
+                        .join(", ")}
+                    </p>
+                  )}
+
+                  {/* Price */}
                   <p className="text-lg font-bold text-primary-600 dark:text-primary-400 mt-1">
                     {formatCurrency(item.price)}
                   </p>
 
+                  {/* Quantity & Remove */}
                   <div className="flex items-center justify-between mt-3">
-                    {/* Quantity Controls */}
                     <div className="flex items-center gap-3 bg-gray-100 dark:bg-gray-800 rounded-lg px-3 py-1">
                       <button
                         onClick={() =>
@@ -165,7 +189,6 @@ export default function CartPage() {
                       </button>
                     </div>
 
-                    {/* Remove Button */}
                     <button
                       onClick={() => removeItem(item.productId, item.variantId)}
                       className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
@@ -241,7 +264,7 @@ export default function CartPage() {
             <div className="flex justify-between text-gray-600 dark:text-gray-400">
               <span>Delivery Charge</span>
               <span>
-                {deliveryCharge === 0 ? 'FREE' : formatCurrency(deliveryCharge)}
+                {deliveryCharge === 0 ? "FREE" : formatCurrency(deliveryCharge)}
               </span>
             </div>
             {subtotal < 500 && (
@@ -264,7 +287,7 @@ export default function CartPage() {
         <div className="fixed bottom-0 left-0 right-0 p-4 bg-white/80 dark:bg-gray-900/80 backdrop-blur-lg border-t border-gray-200 dark:border-gray-800">
           <div className="max-w-4xl mx-auto">
             <Button
-              onClick={() => router.push('/checkout')}
+              onClick={() => router.push("/checkout")}
               className="w-full"
               size="lg"
             >

@@ -151,6 +151,11 @@ export default function OrderTrackingPage() {
                         {item.variantName}
                       </p>
                     )}
+                    {item.variantName && (
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        {item.variantName}
+                      </p>
+                    )}
                     <p className="text-sm text-gray-600 dark:text-gray-400">
                       Qty: {item.quantity}
                     </p>

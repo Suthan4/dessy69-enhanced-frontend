@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import Image from "next/image";
 import { Check, Minus, Plus } from "lucide-react";
-import { Product, ProductVariant } from "@/lib/types/product";
+import { Product, ProductVariant, Ingredient } from "@/lib/types/product";
 import { formatCurrency } from "@/lib/utils/formatters";
 import { cn } from "@/lib/utils/cn";
 import { BottomSheet } from "../ui/BottomSheet";
@@ -26,7 +26,31 @@ export const ProductVariantSheet: React.FC<ProductVariantSheetProps> = ({
     null
   );
   const [quantity, setQuantity] = useState(1);
+  const [selectedIngredients, setSelectedIngredients] = useState<Ingredient[]>(
+    []
+  );
+
   const addItem = useCartStore((state) => state.addItem);
+
+  // Toggle ingredient selection
+  const toggleIngredient = (ingredient: Ingredient) => {
+    setSelectedIngredients((prev) => {
+      if (prev.find((i) => i._id === ingredient._id)) {
+        return prev.filter((i) => i._id !== ingredient._id);
+      }
+      return [...prev, ingredient];
+    });
+  };
+
+  // Compute total price including ingredients
+  const totalPrice = useMemo(() => {
+    const variantPrice = selectedVariant ? selectedVariant.sellingPrice : 0;
+    const ingredientsPrice = selectedIngredients.reduce(
+      (sum, ing) => sum + (ing.additionalPrice || 0),
+      0
+    );
+    return (variantPrice + ingredientsPrice) * quantity;
+  }, [selectedVariant, selectedIngredients, quantity]);
 
   const handleAddToCart = () => {
     if (!selectedVariant) {
@@ -41,17 +65,18 @@ export const ProductVariantSheet: React.FC<ProductVariantSheetProps> = ({
       variantName: selectedVariant.name,
       variantSize: selectedVariant.size,
       quantity,
-      price: selectedVariant.sellingPrice,
+      price: totalPrice,
+      ingredients: selectedIngredients.map((ing) => ({
+        id: ing._id,
+        name: ing.name,
+        additionalPrice: ing.additionalPrice || 0,
+      })),
       image: product.images[0] || "",
     });
 
     toast.success(`${quantity}x ${product.name} added to cart`);
     onClose();
   };
-
-  const totalPrice = selectedVariant
-    ? selectedVariant.sellingPrice * quantity
-    : 0;
 
   return (
     <BottomSheet isOpen={isOpen} onClose={onClose}>
@@ -115,7 +140,6 @@ export const ProductVariantSheet: React.FC<ProductVariantSheetProps> = ({
                   )}
                 >
                   <div className="flex items-center gap-3">
-                    {/* Radio Button */}
                     <div
                       className={cn(
                         "w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all",
@@ -126,8 +150,6 @@ export const ProductVariantSheet: React.FC<ProductVariantSheetProps> = ({
                     >
                       {isSelected && <Check className="w-3 h-3 text-white" />}
                     </div>
-
-                    {/* Variant Info */}
                     <div className="text-left">
                       <div className="flex items-center gap-2">
                         <span className="font-medium text-gray-900 dark:text-gray-100">
@@ -144,8 +166,6 @@ export const ProductVariantSheet: React.FC<ProductVariantSheetProps> = ({
                       )}
                     </div>
                   </div>
-
-                  {/* Price */}
                   <div className="text-right">
                     <div className="flex items-center gap-2">
                       <span className="font-bold text-gray-900 dark:text-gray-100">
@@ -169,22 +189,52 @@ export const ProductVariantSheet: React.FC<ProductVariantSheetProps> = ({
           </div>
         </div>
 
-        {/* Ingredients (if available) */}
+        {/* Ingredients Selection */}
         {product.ingredients && product.ingredients.length > 0 && (
-          <div className="pt-4 border-t border-gray-200 dark:border-gray-800">
+          <div className="space-y-2">
             <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">
-              Ingredients
+              Ingredients (Optional)
             </h4>
-            <div className="flex flex-wrap gap-2">
-              {product.ingredients.map((ingredient, index) => (
-                <span
-                  key={index}
-                  className="text-xs bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 px-3 py-1 rounded-full"
+            {product.ingredients.map((ing) => {
+              const isSelected = !!selectedIngredients.find(
+                (i) => i._id === ing._id
+              );
+              return (
+                <button
+                  key={ing._id}
+                  onClick={() => toggleIngredient(ing)}
+                  className={cn(
+                    "w-full flex items-center justify-between p-4 rounded-xl border-2 transition-all duration-200",
+                    isSelected
+                      ? "border-primary-500 bg-primary-50 dark:bg-primary-950/50"
+                      : "border-gray-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700"
+                  )}
                 >
-                  {ingredient}
-                </span>
-              ))}
-            </div>
+                  <div className="flex items-center gap-3">
+                    <div
+                      className={cn(
+                        "w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all",
+                        isSelected
+                          ? "border-primary-500 bg-primary-500"
+                          : "border-gray-300 dark:border-gray-600"
+                      )}
+                    >
+                      {isSelected && <Check className="w-3 h-3 text-white" />}
+                    </div>
+                    <div className="text-left">
+                      <span className="font-medium text-gray-900 dark:text-gray-100">
+                        {ing.name}
+                      </span>
+                      {ing.additionalPrice && ing?.additionalPrice > 0 && (
+                        <span className="text-sm text-gray-500 dark:text-gray-400 ml-2">
+                          +{formatCurrency(ing.additionalPrice)}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </button>
+              );
+            })}
           </div>
         )}
       </div>
