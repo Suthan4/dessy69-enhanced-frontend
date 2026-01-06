@@ -1,12 +1,12 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Plus, Trash2 } from "lucide-react";
 import { categoriesApi } from "@/lib/api/categories";
-import { Category } from "@/lib/types/category";
+import { Category, CategoryTree } from "@/lib/types/category";
 import { Product, CreateProductData } from "@/lib/types/product";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
@@ -42,19 +42,56 @@ interface ProductFormProps {
   onSubmit: (data: CreateProductData) => Promise<void>;
   initialData?: Product;
 }
+/* -------------------- Flatten Helper -------------------- */
+type FlatCategory = {
+  id: string;
+  label: string;
+  level: number;
+  isParent: boolean;
+};
+
+function flattenCategories(
+  categories: CategoryTree[],
+  parentLabel = ""
+): FlatCategory[] {
+  let result: FlatCategory[] = [];
+
+  for (const cat of categories) {
+    const label = parentLabel ? `${parentLabel} › ${cat.name}` : cat.name;
+
+    const hasChildren = Array.isArray(cat.children) && cat.children.length > 0;
+
+    result.push({
+      id: cat.id,
+      label,
+      level: cat.level,
+      isParent: hasChildren, // 🔴 parents will be disabled
+    });
+
+    if (hasChildren) {
+      result.push(...flattenCategories(cat.children!, label));
+    }
+  }
+
+  return result;
+}
 
 export const ProductForm: React.FC<ProductFormProps> = ({
   onSubmit,
   initialData,
 }) => {
-  const [categories, setCategories] = useState<Category[]>([]);
+const [categories, setCategories] = useState<CategoryTree[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  /* Autocomplete state */
+  const [search, setSearch] = useState("");
+  const [open, setOpen] = useState(false);
 
   const {
     register,
     handleSubmit,
     control,
-    watch,
+    setValue,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(productSchema),
@@ -82,18 +119,37 @@ export const ProductForm: React.FC<ProductFormProps> = ({
     name: "variants",
   });
 
+  /* -------------------- Load Categories -------------------- */
   useEffect(() => {
-    loadCategories();
+    (async () => {
+      try {
+        const res = await categoriesApi().getAll();
+        setCategories(res.data);
+      } catch {
+        toast.error("Failed to load categories");
+      }
+    })();
   }, []);
 
-  const loadCategories = async () => {
-    try {
-      const data = await categoriesApi().getAll();
-      setCategories(data);
-    } catch (error) {
-      toast.error("Failed to load categories");
+  /* -------------------- Flatten + Filter -------------------- */
+  const flatCategories = useMemo(
+    () => flattenCategories(categories),
+    [categories]
+  );
+
+  const filtered = flatCategories.filter((c) =>
+    c.label.toLowerCase().includes(search.toLowerCase())
+  );
+
+  /* Pre-fill on edit */
+  useEffect(() => {
+    if (initialData && flatCategories.length) {
+      const selected = flatCategories.find(
+        (c) => c.id === initialData.categoryId
+      );
+      if (selected) setSearch(selected.label);
     }
-  };
+  }, [initialData, flatCategories]);
 
   const handleFormSubmit = async (data: ProductFormData) => {
     setIsSubmitting(true);
@@ -105,6 +161,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
       setIsSubmitting(false);
     }
   };
+  console.log("categories", categories);
 
   return (
     <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
@@ -146,7 +203,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             )}
           </div>
 
-          <div>
+          {/* <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Category
             </label>
@@ -155,16 +212,68 @@ export const ProductForm: React.FC<ProductFormProps> = ({
               className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary-500"
             >
               <option value="">Select category</option>
-              {Array.isArray(categories)&&categories?.map((cat) => (
-                <option key={cat.id} value={cat.id}>
-                  {cat.name}
-                </option>
-              ))}
+              {Array.isArray(categories) &&
+                categories?.map((cat: Category) => (
+                  <option key={cat.id} value={cat.id}>
+                    {cat.name}
+                  </option>
+                ))}
             </select>
             {errors.categoryId && (
               <p className="mt-1 text-sm text-red-500">
                 {errors.categoryId.message}
               </p>
+            )}
+          </div> */}
+          {/* -------- Category Autocomplete -------- */}
+          <div className="relative">
+            <label className="text-sm font-medium mb-1 block">Category</label>
+
+            <Input
+              value={search}
+              placeholder="Search category..."
+              onFocus={() => setOpen(true)}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setOpen(true);
+              }}
+              error={errors.categoryId?.message}
+            />
+
+            {open && (
+              <div className="absolute z-50 mt-1 w-full max-h-64 overflow-auto rounded-xl border bg-white shadow">
+                {filtered.length === 0 && (
+                  <div className="px-4 py-2 text-sm text-gray-500">
+                    No categories found
+                  </div>
+                )}
+
+                {filtered.map((cat) => (
+                  <button
+                    key={cat.id}
+                    type="button"
+                    disabled={cat.isParent}
+                    onClick={() => {
+                      if (cat.isParent) return; // 🚫 parent blocked
+                      setValue("categoryId", cat.id, {
+                        shouldValidate: true,
+                      });
+                      setSearch(cat.label);
+                      setOpen(false);
+                    }}
+                    className={`w-full text-left px-4 py-2 text-sm text-gray-950 ${
+                      cat.isParent
+                        ? "text-gray-400 cursor-not-allowed"
+                        : "hover:bg-gray-100"
+                    }`}
+                  >
+                    <span style={{ paddingLeft: cat.level * 12 }}>
+                      {cat.label}
+                      {cat.isParent && " (select sub-category)"}
+                    </span>
+                  </button>
+                ))}
+              </div>
             )}
           </div>
         </div>
@@ -208,6 +317,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
               type="button"
               variant="outline"
               size="sm"
+              leftIcon={<Plus className="w-4 h-4 " />}
               onClick={() =>
                 append({
                   name: "",
@@ -218,7 +328,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                 })
               }
             >
-              <Plus className="w-4 h-4 mr-1" />
               Add Variant
             </Button>
           </div>

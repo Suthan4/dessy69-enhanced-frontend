@@ -3,8 +3,8 @@ import { ApiResponse } from "../types/common";
 import { clientApi } from "./client-api";
 
 export const categoriesApi = () =>({
-  getAll: async (): Promise<Category[]> => {
-    const response = await clientApi.get<any, ApiResponse<Category[]>>("/categories/tree");
+  getAll: async () => {
+    const response = await clientApi.get("/categories/tree");
     return response.data!;
   },
 
@@ -46,7 +46,7 @@ export const categoriesApi = () =>({
     return response.data!;
   },
 
-  delete: async (id: string): Promise<void> => {
+  delete: async (id: string) => {
     await clientApi.delete(`/categories/${id}`);
   },
 });

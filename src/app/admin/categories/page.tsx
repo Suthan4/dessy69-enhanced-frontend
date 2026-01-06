@@ -1,44 +1,50 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Plus, Edit, Trash2, FolderTree } from "lucide-react";
+import { Plus, Edit, Trash2, FolderTree, ChevronDown, ChevronRight, Trash } from "lucide-react";
 import { categoriesApi } from "@/lib/api/categories";
-import { Category } from "@/lib/types/category";
+import { Category, CategoryTree } from "@/lib/types/category";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Modal } from "@/components/ui/Modal";
 import { Loading } from "@/components/ui/Loading";
 import { toast } from "sonner";
-import { CategoryForm } from "../../../components/admin/categoryForm";
+import { CategoryForm } from "@/components/admin/categoryForm";
 
+/* ================= Page ================= */
 export default function CategoriesPage() {
-  const [categories, setCategories] = useState<any>();
+  const [categories, setCategories] = useState<CategoryTree[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isDelLoading, setIsDelLoading] = useState(false);
+
   const [formModal, setFormModal] = useState<{
     isOpen: boolean;
     category: Category | null;
   }>({ isOpen: false, category: null });
+
   const [deleteModal, setDeleteModal] = useState<{
     isOpen: boolean;
     category: Category | null;
   }>({ isOpen: false, category: null });
 
+  /* -------- Load Categories -------- */
   useEffect(() => {
     loadCategories();
   }, []);
 
   const loadCategories = async () => {
     try {
-      const data = await categoriesApi().getAll();
-      setCategories(data);
-    } catch (error) {
+      const res = await categoriesApi().getAll();
+      setCategories(res.data); // ✅ already TREE
+    } catch {
       toast.error("Failed to load categories");
     } finally {
       setIsLoading(false);
     }
   };
 
+  /* -------- Create / Update -------- */
   const handleSubmit = async (data: any) => {
     try {
       if (formModal.category) {
@@ -56,16 +62,22 @@ export default function CategoriesPage() {
     }
   };
 
+  /* -------- Delete -------- */
   const handleDelete = async () => {
+    setIsDelLoading(true);
     if (!deleteModal.category) return;
 
     try {
       await categoriesApi().delete(deleteModal.category.id);
       toast.success("Category deleted successfully");
+      setIsDelLoading(false);
       setDeleteModal({ isOpen: false, category: null });
       loadCategories();
     } catch (error: any) {
       toast.error(error.message || "Failed to delete category");
+      setIsDelLoading(false)
+    }finally{
+      setIsDelLoading(false)
     }
   };
 
@@ -73,23 +85,16 @@ export default function CategoriesPage() {
     return <Loading fullScreen text="Loading categories..." />;
   }
 
-  console.log("categories", categories);
-  // Group categories by level
-  const rootCategories = categories?.data?.filter((cat:Category) => cat.level === 0);
-  const childCategories = categories?.data?.filter(
-    (cat: Category) => cat.level > 0
-  );
-
   return (
     <div className="space-y-6">
-      {/* Header */}
+      {/* -------- Header -------- */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
             Categories
           </h1>
           <p className="text-gray-600 dark:text-gray-400 mt-1">
-            Manage menu categories ({categories?.length})
+            Manage menu categories
           </p>
         </div>
         <Button
@@ -100,43 +105,20 @@ export default function CategoriesPage() {
         </Button>
       </div>
 
-      {/* Root Categories */}
+      {/* -------- Category Tree -------- */}
       <div>
         <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">
-          Main Categories
+          Category Tree
         </h2>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {rootCategories?.map((category: Category) => (
-            <CategoryCard
-              key={category.id}
-              category={category}
-              onEdit={() => setFormModal({ isOpen: true, category })}
-              onDelete={() => setDeleteModal({ isOpen: true, category })}
-            />
-          ))}
-        </div>
+
+        <CategoryTreeView
+          categories={categories}
+          onEdit={(category) => setFormModal({ isOpen: true, category })}
+          onDelete={(category) => setDeleteModal({ isOpen: true, category })}
+        />
       </div>
 
-      {/* Child Categories */}
-      {childCategories?.length > 0 && (
-        <div>
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">
-            Sub Categories
-          </h2>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {childCategories?.map((category: Category) => (
-              <CategoryCard
-                key={category.id}
-                category={category}
-                onEdit={() => setFormModal({ isOpen: true, category })}
-                onDelete={() => setDeleteModal({ isOpen: true, category })}
-              />
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Form Modal */}
+      {/* -------- Form Modal -------- */}
       <Modal
         isOpen={formModal.isOpen}
         onClose={() => setFormModal({ isOpen: false, category: null })}
@@ -145,11 +127,11 @@ export default function CategoriesPage() {
         <CategoryForm
           onSubmit={handleSubmit}
           initialData={formModal.category || undefined}
-          categories={categories?.data}
+          categories={categories}
         />
       </Modal>
 
-      {/* Delete Modal */}
+      {/* -------- Delete Modal -------- */}
       <Modal
         isOpen={deleteModal.isOpen}
         onClose={() => setDeleteModal({ isOpen: false, category: null })}
@@ -169,7 +151,7 @@ export default function CategoriesPage() {
             >
               Cancel
             </Button>
-            <Button variant="danger" onClick={handleDelete} className="flex-1">
+            <Button variant="danger" disabled={isDelLoading} onClick={handleDelete} className="flex-1">
               Delete
             </Button>
           </div>
@@ -179,6 +161,115 @@ export default function CategoriesPage() {
   );
 }
 
+/* ================= Tree Renderer ================= */
+function CategoryTreeView({
+  categories,
+  onEdit,
+  onDelete,
+  level = 0,
+}: {
+  categories: CategoryTree[];
+  onEdit: (cat: CategoryTree) => void;
+  onDelete: (cat: CategoryTree) => void;
+  level?: number;
+}) {
+  return (
+    <div className="space-y-3">
+      {categories.map((category) => (
+        <CategoryNode
+          key={category.id}
+          category={category}
+          level={level}
+          onEdit={onEdit}
+          onDelete={onDelete}
+        />
+      ))}
+    </div>
+  );
+}
+
+/* ================= Tree Node ================= */
+function CategoryNode({
+  category,
+  level,
+  onEdit,
+  onDelete,
+}: {
+  category: CategoryTree;
+  level: number;
+  onEdit: (cat: CategoryTree) => void;
+  onDelete: (cat: CategoryTree) => void;
+}) {
+  const [open, setOpen] = useState(true);
+  const hasChildren = category.children && category.children.length > 0;
+
+  return (
+    <div>
+      {/* CARD */}
+      <div
+        className="flex items-center justify-between rounded-xl border bg-card p-4"
+        style={{ marginLeft: level * 24 }}
+      >
+        <div className="flex items-center gap-3">
+          {/* Chevron */}
+          {hasChildren ? (
+            <Button
+              onClick={() => setOpen((prev) => !prev)}
+              leftIcon={open ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
+              className="text-muted-foreground"
+            >
+              
+            </Button>
+          ) : (
+            <div className="w-[18px]" />
+          )}
+
+          {/* Name */}
+          <div>
+            <p className="font-semibold">{category.name}</p>
+            <p className="text-xs text-muted-foreground">
+              Level {category.level}
+            </p>
+          </div>
+        </div>
+
+        {/* Actions */}
+        <div className="flex items-center gap-2">
+          <Button size="sm" variant="outline" onClick={() => onEdit(category)}>
+            <Edit size={14} />
+          </Button>
+
+          <Button
+            size="sm"
+            variant="danger"
+            onClick={() => onDelete(category)}
+          >
+            <Trash size={14} />
+          </Button>
+        </div>
+      </div>
+
+      {/* CHILDREN */}
+      {open && hasChildren && (
+        <div className="mt-2 space-y-2">
+          {category.children!.map((child) => (
+            <CategoryNode
+              key={child.id}
+              category={child}
+              level={level + 1}
+              onEdit={onEdit}
+              onDelete={onDelete}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+
+
+/* ================= Card ================= */
 function CategoryCard({
   category,
   onEdit,

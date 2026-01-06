@@ -15,7 +15,10 @@ const categorySchema = z.object({
     .min(2)
     .regex(/^[a-z0-9-]+$/, "Slug must be lowercase with hyphens"),
   description: z.string().optional(),
-  parentId: z.string().optional(),
+  parentId: z
+    .string()
+    .optional()
+    .transform((val) => (val === "" ? undefined : val)),
 });
 
 type CategoryFormData = z.infer<typeof categorySchema>;
@@ -37,7 +40,7 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<CategoryFormData>({
+  } = useForm({
     resolver: zodResolver(categorySchema),
     defaultValues: initialData
       ? {
@@ -52,7 +55,11 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({
   const handleFormSubmit = async (data: CategoryFormData) => {
     setIsSubmitting(true);
     try {
-      await onSubmit(data);
+        const cleanedData = {
+          ...data,
+          parentId: data.parentId || undefined,
+        };
+      await onSubmit(cleanedData);
     } catch (error) {
       // Error handled by parent
     } finally {
