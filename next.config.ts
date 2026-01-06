@@ -13,17 +13,16 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  // ✅ Only use rewrites in development
   async rewrites() {
-    if (process.env.NODE_ENV === "development") {
-      return [
-        {
-          source: "/api/:path*",
-          destination: "http://localhost:5000/api/:path*",
-        },
-      ];
-    }
-    return []; // No rewrites in production
+    return [
+      {
+        source: "/api/:path*",
+        destination:
+          process.env.NODE_ENV === "production"
+            ? "https://dessy69-new-backend.onrender.com/api/:path*"
+            : "http://localhost:5000/api/:path*",
+      },
+    ];
   },
 };
 

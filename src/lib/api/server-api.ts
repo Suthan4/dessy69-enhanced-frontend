@@ -38,7 +38,7 @@ export const createServerApi = async () => {
   const cookieHeader = (await headersList).get("cookie") || "";
 
   return axios.create({
-    baseURL,
+    baseURL: "/api",
     timeout: 15000,
     withCredentials: true,
     headers: {
