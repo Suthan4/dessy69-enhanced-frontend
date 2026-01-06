@@ -26,6 +26,7 @@ export default function OrderTrackingPage() {
   const router = useRouter();
   const [order, setOrder] = useState<Order | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  console.log("order", order);
 
   useEffect(() => {
     loadOrder();
@@ -33,8 +34,8 @@ export default function OrderTrackingPage() {
 
   const loadOrder = async () => {
     try {
-      const data = await ordersApi().getById(params.id as string);
-      setOrder(data);
+      const order = await ordersApi().getById(params.id as string);
+      setOrder(order?.data);
     } catch (error) {
       toast.error("Failed to load order");
       router.push("/orders");

@@ -16,16 +16,13 @@ export interface VerifyPaymentData {
 }
 
 export const paymentApi = () => ({
-  createOrder: async (orderId: string): Promise<PaymentOrderResponse> => {
-    const response = await clientApi.post<any, ApiResponse<PaymentOrderResponse>>(
-      "/payment/create-order",
-      { orderId }
-    );
+  createOrder: async (orderId: string) => {
+    const response = await clientApi.post("/payment/create-order", { orderId });
     return response.data!;
   },
 
-  verifyPayment: async (data: VerifyPaymentData): Promise<Order> => {
-    const response = await clientApi.post<any, ApiResponse<Order>>(
+  verifyPayment: async (data: VerifyPaymentData) => {
+    const response = await clientApi.post(
       "/payment/verify",
       data
     );

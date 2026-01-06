@@ -62,6 +62,7 @@ export default function CheckoutPage() {
 
   const handlePayment = async (orderId: string, orderData: any) => {
     const isLoaded = await loadRazorpayScript();
+    console.log("orderId", orderId);
 
     if (!isLoaded) {
       toast.error("Failed to load payment gateway");
@@ -72,12 +73,12 @@ export default function CheckoutPage() {
       const paymentOrder = await paymentApi().createOrder(orderId);
 
       const options = {
-        key: paymentOrder.keyId,
-        amount: paymentOrder.amount,
-        currency: paymentOrder.currency,
+        key: paymentOrder?.data.keyId,
+        amount: paymentOrder?.data.amount * 100,
+        currency: paymentOrder?.data.currency,
         name: "Dessy69",
         description: "Ice Cream Order",
-        order_id: paymentOrder.razorpayOrderId,
+        order_id: paymentOrder?.data.razorpayOrderId,
         handler: async (response: any) => {
           try {
             await paymentApi().verifyPayment({
@@ -89,8 +90,7 @@ export default function CheckoutPage() {
             clearCart();
             toast.success("Payment successful!");
             router.push(`/orders/${orderId}`);
-            console.log("orderId",orderId);
-            
+            console.log("orderId", orderId);
           } catch (error) {
             toast.error("Payment verification failed");
           }
@@ -135,7 +135,9 @@ export default function CheckoutPage() {
       };
 
       const order = await ordersApi().create(orderData);
-      await handlePayment(order.id, data);
+      console.log("order", order);
+
+      await handlePayment(order?.data?.id, data);
     } catch (error: any) {
       toast.error(error.message || "Failed to create order");
     } finally {

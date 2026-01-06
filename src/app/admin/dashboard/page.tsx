@@ -56,6 +56,8 @@ export default function AdminDashboard() {
         const pendingOrders = orders.filter(
           (o: any) => o.status === "pending"
         ).length;
+console.log("pendingOrders", pendingOrders);
+console.log("orders", orders);
 
         setData({
           orders,

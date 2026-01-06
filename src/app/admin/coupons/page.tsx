@@ -92,8 +92,10 @@ export default function CouponsPage() {
             Manage discount coupons ({coupons?.length})
           </p>
         </div>
-        <Button onClick={() => setFormModal({ isOpen: true, coupon: null })}>
-          <Plus className="w-5 h-5 mr-2" />
+        <Button
+          leftIcon={<Plus className="w-5 h-5" />}
+          onClick={() => setFormModal({ isOpen: true, coupon: null })}
+        >
           Add Coupon
         </Button>
       </div>

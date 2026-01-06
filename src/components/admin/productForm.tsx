@@ -155,7 +155,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
               className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary-500"
             >
               <option value="">Select category</option>
-              {categories.map((cat) => (
+              {Array.isArray(categories)&&categories?.map((cat) => (
                 <option key={cat.id} value={cat.id}>
                   {cat.name}
                 </option>

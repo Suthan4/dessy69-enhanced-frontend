@@ -92,8 +92,10 @@ export default function CategoriesPage() {
             Manage menu categories ({categories?.length})
           </p>
         </div>
-        <Button onClick={() => setFormModal({ isOpen: true, category: null })}>
-          <Plus className="w-5 h-5 mr-2" />
+        <Button
+          leftIcon={<Plus className="w-5 h-5" />}
+          onClick={() => setFormModal({ isOpen: true, category: null })}
+        >
           Add Category
         </Button>
       </div>

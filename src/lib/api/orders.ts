@@ -4,11 +4,8 @@ import { normalizePaginatedResponse } from "../utils/normalizePaginatedResponse"
 import { clientApi } from "./client-api";
 
 export const ordersApi = () => ({
-  create: async (data: CreateOrderData): Promise<Order> => {
-    const response = await clientApi.post<any, ApiResponse<Order>>(
-      "/orders",
-      data
-    );
+  create: async (data: CreateOrderData) => {
+    const response = await clientApi.post("/orders", data);
     return response.data!;
   },
 
@@ -34,8 +31,8 @@ export const ordersApi = () => ({
     return normalizePaginatedResponse<Order>(response.data!);
   },
 
-  getById: async (id: string): Promise<Order> => {
-    const response = await clientApi.get<any, ApiResponse<Order>>(
+  getById: async (id: string)=> {
+    const response = await clientApi.get(
       `/orders/${id}`
     );
     return response.data!;

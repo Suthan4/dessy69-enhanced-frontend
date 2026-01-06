@@ -84,8 +84,7 @@ export default function ProductsPage() {
           </p>
         </div>
         <Link href="/admin/products/new">
-          <Button>
-            <Plus className="w-5 h-5 mr-2" />
+          <Button leftIcon={<Plus className="w-5 h-5" />}>
             Add Product
           </Button>
         </Link>
@@ -93,7 +92,7 @@ export default function ProductsPage() {
 
       {/* Products Grid */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {products.map((product:any) => (
+        {products?.map((product: any) => (
           <Card key={product.id}>
             <div className="p-4">
               {/* Product Image */}
