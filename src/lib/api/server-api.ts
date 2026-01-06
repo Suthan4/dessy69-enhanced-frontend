@@ -21,14 +21,24 @@
 //   });
 // };
 import axios from "axios";
+import { headers } from "next/headers";
 
-export const createServerApi = () => {
+export const createServerApi = async () => {
+  const headersList = headers();
+  const cookie = (await headersList).get("cookie") ?? "";
+
+  const baseURL =
+    process.env.NODE_ENV === "production"
+      ? "https://dessy69-new-backend.onrender.com/api"
+      : "https://localhost:5000/api";
+
   return axios.create({
-    baseURL: "/api", // 🔥 IMPORTANT: same-origin
+    baseURL, // 🔥 DIRECT BACKEND (NO REWRITES)
     timeout: 15000,
-    withCredentials: true, // send cookies automatically
     headers: {
       "Content-Type": "application/json",
+      ...(cookie && { Cookie: cookie }),
     },
   });
 };
+

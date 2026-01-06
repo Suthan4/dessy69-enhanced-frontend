@@ -14,15 +14,14 @@ const nextConfig: NextConfig = {
     ],
   },
   async rewrites() {
-    return [
-      {
-        source: "/api/:path*",
-        destination:
-          process.env.NODE_ENV === "production"
-            ? "https://dessy69-new-backend.onrender.com/api/:path*"
-            : "http://localhost:5000/api/:path*",
-      },
-    ];
+    return process.env.NODE_ENV === "development"
+      ? [
+          {
+            source: "/api/:path*",
+            destination: "https://localhost:5000/api/:path*",
+          },
+        ]
+      : [];
   },
 };
 
