@@ -1,49 +1,34 @@
 // import axios from "axios";
-// import { cookies } from "next/headers";
+// import { headers } from "next/headers";
 
 // export const createServerApi = async () => {
-//   const baseURL = "https://dessy69-new-backend.onrender.com/api";
-//   const testBaseUrl =  process.env.NODE_ENV === "production"
+//   const baseURL =
+//     process.env.NODE_ENV === "production"
 //       ? "https://dessy69-new-backend.onrender.com/api"
-//       : "https://localhost:5000/api";
-//   console.log("testBaseUrl", testBaseUrl);
-  
+//       : "http://localhost:5000/api";
 
-//   const cookieStore = await cookies();
-//   const cookieHeader = cookieStore
-//     .getAll()
-//     .map((c) => `${c.name}=${c.value}`)
-//     .join("; ");
+//   const headersList = headers();
+//   const cookieHeader = (await headersList).get("cookie") || "";
 
 //   return axios.create({
-//     baseURL,
+//     baseURL: "/api",
 //     timeout: 15000,
-//     withCredentials: true, // 🔥 REQUIRED
+//     withCredentials: true,
 //     headers: {
 //       "Content-Type": "application/json",
-//       Cookie: cookieHeader, // ✅ SSR auth fixed
+//       ...(cookieHeader && { Cookie: cookieHeader }),
 //     },
 //   });
 // };
 import axios from "axios";
-import { headers } from "next/headers";
 
-export const createServerApi = async () => {
-  const baseURL =
-    process.env.NODE_ENV === "production"
-      ? "https://dessy69-new-backend.onrender.com/api"
-      : "http://localhost:5000/api";
-
-  const headersList = headers();
-  const cookieHeader = (await headersList).get("cookie") || "";
-
+export const createServerApi = () => {
   return axios.create({
-    baseURL: "/api",
+    baseURL: "/api", // 🔥 IMPORTANT: same-origin
     timeout: 15000,
-    withCredentials: true,
+    withCredentials: true, // send cookies automatically
     headers: {
       "Content-Type": "application/json",
-      ...(cookieHeader && { Cookie: cookieHeader }),
     },
   });
 };
