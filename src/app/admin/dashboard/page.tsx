@@ -8,11 +8,22 @@ import { OrderTable } from "@/components/admin/orderTable";
 import { Card } from "@/components/ui/Card";
 import { formatCurrency } from "@/lib/utils/formatters";
 import { createServerApi } from "@/lib/api/server-api";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 export default async function AdminDashboard() {
   console.log("🚨 ADMIN DASHBOARD SSR HIT", new Date().toISOString());
+  // Check authentication first
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token");
+console.log("token", token);
 
+  if (!token?.value) {
+    console.log("❌ No auth token found, redirecting to login");
+    // redirect("/login");
+  }
   const api = await createServerApi();
+
   // Fetch dashboard data
   let ordersData;
   let productsData;
@@ -23,7 +34,7 @@ export default async function AdminDashboard() {
         params: { page: 1, limit: 10, isAvailable: true },
       }),
     ]);
-  } catch (error:any) {
+  } catch (error: any) {
     console.error("Error fetching menu data:", error);
     console.error("SSR API FAILED", {
       code: error.code,

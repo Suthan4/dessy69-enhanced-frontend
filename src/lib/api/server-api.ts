@@ -1,44 +1,30 @@
-// import axios from "axios";
-// import { headers } from "next/headers";
-
-// export const createServerApi = async () => {
-//   const baseURL =
-//     process.env.NODE_ENV === "production"
-//       ? "https://dessy69-new-backend.onrender.com/api"
-//       : "http://localhost:5000/api";
-
-//   const headersList = headers();
-//   const cookieHeader = (await headersList).get("cookie") || "";
-
-//   return axios.create({
-//     baseURL: "/api",
-//     timeout: 15000,
-//     withCredentials: true,
-//     headers: {
-//       "Content-Type": "application/json",
-//       ...(cookieHeader && { Cookie: cookieHeader }),
-//     },
-//   });
-// };
+// lib/api/server-api.ts
 import axios from "axios";
-import { headers } from "next/headers";
+import { cookies } from "next/headers";
 
 export const createServerApi = async () => {
-  const headersList = headers();
-  const cookie = (await headersList).get("cookie") ?? "";
+  // Get token from Next.js cookies
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token"); 
 
   const baseURL =
     process.env.NODE_ENV === "production"
       ? "https://dessy69-new-backend.onrender.com/api"
       : "https://localhost:5000/api";
 
+  console.log("🔧 [Server API] Creating axios instance");
+  console.log("   baseURL:", baseURL);
+  console.log("   Token:", token ? "EXISTS ✅" : "MISSING ❌");
+
   return axios.create({
-    baseURL, // 🔥 DIRECT BACKEND (NO REWRITES)
+    baseURL,
     timeout: 15000,
     headers: {
       "Content-Type": "application/json",
-      ...(cookie && { Cookie: cookie }),
+      // ✅ CRITICAL: Send token as Authorization header
+      ...(token && { Authorization: `Bearer ${token.value}` }),
+
+      Cookie: token?.value, // ✅ SSR auth fixed
     },
   });
 };
-
