@@ -1,4 +1,6 @@
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
+export const runtime = "nodejs";
 
 import { ShoppingBag, Package, Users, TrendingUp } from "lucide-react";
 import { StatsCard } from "@/components/admin/statsCard";
