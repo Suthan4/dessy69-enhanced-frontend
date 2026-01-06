@@ -15,6 +15,8 @@ export const createServerApi = async () => {
 
   return axios.create({
     baseURL,
+    timeout: 15000,
+    withCredentials: true, // 🔥 REQUIRED
     headers: {
       "Content-Type": "application/json",
       Cookie: cookieHeader, // ✅ SSR auth fixed
